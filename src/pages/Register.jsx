@@ -5,11 +5,13 @@ import { Link } from 'react-router-dom'
 import AuthContext from '../context/AuthContext'
 import AuthService from '../services/AuthService'
 import svg from '../svgs/main.svg'
+import { useNavigate } from 'react-router-dom'
 
 function Register() {
 
   const authService = new AuthService();
   const toast = useToast()
+  const navigate = useNavigate()
   const {login} = useContext(AuthContext)
 
   const formik = useFormik({
@@ -30,6 +32,7 @@ function Register() {
           duration: 9000,
           isClosable: true,
         })
+        navigate("/home")
       } catch (error) {
         console.log(error.response.data)
         toast({
