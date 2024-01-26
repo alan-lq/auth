@@ -1,0 +1,47 @@
+import { useState } from 'react';
+import Client from "@seithq/ncalayer";
+import './App.css';
+
+function App() {
+    const [ws, setWs] = useState(new WebSocket("ws://127.0.0.1:13579/"));
+
+    const handleButtonClick = () => {
+        if (ws.readyState === WebSocket.OPEN) {
+            ws.send("Hello server");
+
+            const client = new Client(ws);
+
+            client.browseKeyStore("PKCS12", "P12", "", (data) => {
+                if (data.isOk()) {
+                    console.log('KeyStore browse success:', data);
+                } else {
+                    console.error('KeyStore browse error:', data);
+                }
+            });
+        } else if (ws.readyState === WebSocket.CONNECTING) {
+            console.log('WebSocket is still connecting. Please wait.');
+        } else {
+            console.error('WebSocket is not open');
+        }
+    }
+
+
+    ws.onerror = (err) => {
+        console.error('WebSocket Error:', err);
+    }
+
+    ws.onclose = (e) => {
+        console.log('Connection has been closed');
+        if (!e.wasClean) {
+
+        }
+    }
+
+    return (
+        <div className="container">
+            <button onClick={handleButtonClick} className="button">Ready?</button>
+        </div>
+    );
+}
+
+export default App;
